@@ -1,0 +1,68 @@
+public static void moveRobot(Robot robot, int toX, int toY) {
+     int stepsToX = toX - robot.getX(), stepsToY = toY - robot.getY();
+        Direction movesDirectX = getMovesDirect(stepsToX, 'X');
+        Direction movesDirectY = getMovesDirect(stepsToY, 'Y');
+        int board;
+
+        try {
+            while (robot.getDirection() != movesDirectX) {
+                if (stepsToX < 0) {
+                    robot.turnLeft();
+                } else {
+                    robot.turnRight();
+                }
+            }
+
+            while (robot.getX() != toX) {
+                robot.stepForward();
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e);
+        }
+
+        try {
+            while (robot.getDirection() != movesDirectY) {
+                if (stepsToY < 0) {
+                    robot.turnLeft();
+                } else {
+                    robot.turnRight();
+                }
+            }
+
+            while (robot.getY() != toY) {
+                robot.stepForward();
+            }
+
+        } catch (IllegalArgumentException e) {
+            System.out.println(e);
+        }
+
+    }
+
+    public static Direction getMovesDirect(int stepsToGoal, char coordinatesName) throws IllegalArgumentException {
+
+        Direction movesDirect = null;
+
+        if (coordinatesName != 'X' && coordinatesName != 'Y') {
+            throw new IllegalArgumentException("Name the coordinates are incorrect. Must be X or Y.");
+        }
+
+        switch (coordinatesName) {
+            case 'X':
+                if (stepsToGoal < 0) {
+                    movesDirect = Direction.LEFT;
+                } else {
+                    movesDirect = Direction.RIGHT;
+                }
+                break;
+            case 'Y':
+                if (stepsToGoal < 0) {
+                    movesDirect = Direction.DOWN;
+                } else {
+                    movesDirect = Direction.UP;
+                }
+                break;
+        }
+
+        return movesDirect;
+    }
