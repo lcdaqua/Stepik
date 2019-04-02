@@ -1,0 +1,95 @@
+public static Label checkLabels(TextAnalyzer[] analyzers, String text) {
+
+        Label currentLabel = Label.OK;
+
+        for (TextAnalyzer analyzer : analyzers) {
+
+            currentLabel = analyzer.processText(text);
+
+            if (!currentLabel.equals(Label.OK)) {
+                break;
+            }
+        }
+
+        return currentLabel;
+
+    }
+    
+    
+    abstract class KeywordAnalyzer implements TextAnalyzer {
+
+    abstract String[] getKeywords();
+
+    abstract Label getLabel();
+
+    @Override
+    public Label processText(String text) {
+
+        String[] keywords = getKeywords();
+
+        for (String keyword : keywords) {
+            if (text.indexOf(keyword) > -1) {
+                return getLabel();
+            }
+        }
+
+        return Label.OK;
+    }
+}
+
+class NegativeTextAnalyzer extends KeywordAnalyzer {
+
+    public String[] keywords;
+
+    NegativeTextAnalyzer() {
+        keywords  = new String[] {":(", "=(", ":|"};
+    }
+
+    @Override
+    String[] getKeywords() {
+        return keywords;
+    }
+
+    @Override
+    Label getLabel() {
+        return Label.NEGATIVE_TEXT;
+    }
+
+}
+
+class SpamAnalyzer extends KeywordAnalyzer {
+
+    final String[] keywords;
+
+    SpamAnalyzer (String[] keywords) {
+        this.keywords = keywords;
+    }
+
+    @Override
+    String[] getKeywords() {
+        return keywords;
+    }
+
+    @Override
+    Label getLabel() {
+        return Label.SPAM;
+    }
+
+}
+
+class TooLongTextAnalyzer implements TextAnalyzer {
+
+    private final int maxLength;
+
+    TooLongTextAnalyzer (final int maxLength) {
+        this.maxLength = maxLength;
+    }
+
+    @Override
+    public Label processText(String text) {
+        if (text.length() > maxLength) {
+            return Label.TOO_LONG;
+        }
+        return Label.OK;
+    }
+}
